@@ -1,6 +1,7 @@
 import React from "react";
 import TopLandingNav from "./navbar/TopLandingNav";
 import welcome from "../assets/SubTrackerWelcome.png";
+import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
@@ -13,7 +14,9 @@ const Landing = () => {
           Track your Subscriptions with Ease
         </p>
         <button className="bg-teal-400 hover:bg-teal-300 text-black font-semibold px-8 py-3 rounded-lg shadow-md transition duration-300">
-          Sign Up
+          <Link to="/signUp" className="hover:underline">
+            Sign Up
+          </Link>
         </button>
       </div>
     </div>

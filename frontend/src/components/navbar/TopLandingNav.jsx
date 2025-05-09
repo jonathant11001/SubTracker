@@ -8,10 +8,10 @@ const TopLandingNav = () => {
       <div className="flex items-center space-x-2">
         <Link to="/" className="flex items-center space-x-2">
             <img src={logo} alt="Logo" className="w-10 h-10" />
-            <span className="text-teal-400 text-xl font-bold">SubTracker</span>
+            <span className="text-teal-400 text-3xl font-bold">SubTracker</span>
         </Link>
       </div>
-      <div className="space-x-6 text-sm">
+      <div className="space-x-8 text-m">
         <Link to="/about" className="hover:underline">
           About
         </Link>

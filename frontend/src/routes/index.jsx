@@ -4,6 +4,9 @@ import { Navigate } from "react-router-dom";
 const Landing = lazy(() => import("../components/Landing"));
 const About = lazy(() => import("../components/About"));
 const Login = lazy(() => import("../components/Login"));
+const SignUp = lazy(() => import("../components/SignUp"));
+const ForgotPassword = lazy(() => import("../components/ForgotPassword"));
+const Home = lazy(() => import("../components/Home"));
 
 const routes = [
   {
@@ -17,6 +20,18 @@ const routes = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/signUp",
+    element: <SignUp />,
+  },
+  {
+    path: "/forgotPassword",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/home",
+    element: <Home />,
   },
   {
     path: "*",
