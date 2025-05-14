@@ -29,11 +29,12 @@ const Login = () => {
               placeholder="Enter your password"
             />
           </div>
-          <button className="bg-blue-500 text-white text-lg font-semibold px-4 py-3 rounded w-full hover:bg-blue-600 transition">
-            <Link to="/home" className="hover:underline">
-                Log In
-            </Link>
-          </button>
+          <Link
+            to="/home"
+            className="bg-blue-500 text-white text-lg font-semibold px-4 py-3 rounded w-full hover:bg-blue-600 transition text-center block"
+          > 
+            Login
+          </Link>
         </form>
 
         <div className="mt-4 text-sm text-gray-300">

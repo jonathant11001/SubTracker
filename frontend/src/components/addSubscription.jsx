@@ -24,22 +24,11 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
       setError("All fields are required.");
       return;
     }
+
     setError("");
 
-    
-    const startDate = new Date(form.startDate);
-    let renewalDate;
-    if (form.typeOfSubscription === "Monthly") {
-      renewalDate = new Date(startDate.setMonth(startDate.getMonth() + 1));
-    } else if (form.typeOfSubscription === "Yearly") {
-      renewalDate = new Date(startDate.setFullYear(startDate.getFullYear() + 1));
-    }
-
     try {
-      const response = await axios.post("http://localhost:5000/api/subscriptions", {
-        ...form,
-        renewalDate,
-      });
+      const response = await axios.post("http://localhost:5000/api/subscriptions", form);
       setForm({
         name: "",
         price: "",
@@ -48,6 +37,7 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         typeOfSubscription: "",
         notification: false,
       });
+
       onSubscriptionAdded(response.data);
     } catch (error) {
       console.error("Error adding subscription:", error.message);
@@ -59,12 +49,14 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
     <form onSubmit={handleSubmit} className="bg-white p-4 shadow-md rounded mb-6">
       <h2 className="text-xl font-bold mb-4">Add Subscription</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
+
       <input
         className="border p-2 mb-2 w-full"
         placeholder="Name"
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
+
       <input
         className="border p-2 mb-2 w-full"
         placeholder="Price"
@@ -72,6 +64,7 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         value={form.price}
         onChange={(e) => setForm({ ...form, price: e.target.value })}
       />
+
       <input
         className="border p-2 mb-2 w-full"
         type="date"
@@ -79,12 +72,14 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         value={form.startDate}
         onChange={(e) => setForm({ ...form, startDate: e.target.value })}
       />
+
       <input
         className="border p-2 mb-2 w-full"
         placeholder="Category"
         value={form.category}
         onChange={(e) => setForm({ ...form, category: e.target.value })}
       />
+
       <select
         className="border p-2 mb-2 w-full"
         value={form.typeOfSubscription}
@@ -94,6 +89,7 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         <option value="Monthly">Monthly</option>
         <option value="Yearly">Yearly</option>
       </select>
+
       <div className="flex items-center mb-4">
         <input
           type="checkbox"
@@ -103,6 +99,7 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         />
         <label className="text-sm">Enable Notifications</label>
       </div>
+
       <button className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition">
         Add
       </button>
