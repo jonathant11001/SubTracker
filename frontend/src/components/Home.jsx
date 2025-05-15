@@ -4,8 +4,12 @@ import SubTrackerPeeking from "../assets/SubTrackerPeeking.png";
 import SubTrackerPieChart from "../assets/SubTrackerPieChart.png";
 import SubTrackerChill from "../assets/SubTrackerChill.png";
 import UpdateRenewalsButton from "./button/UpdateRenewalButton";
+import Calendar from "./HomeContent/Calendar";
+import MonthlySpending from "./HomeContent/MonthlySpending";
+import PieChart from "./HomeContent/PieChart";
 
 const Home = () => {
+  const [subscriptions, setSubscriptions] = useState([]);
   const [summary, setSummary] = useState({
     monthlySpending: 0,
     yearlyProjection: 0,
@@ -14,15 +18,17 @@ const Home = () => {
   });
 
   useEffect(() => {
-    const fetchSummary = async () => {
+    const fetchData = async () => {
       try {
-        const [monthlyRes, yearlyRes, highestRes, limitRes] = await Promise.all([
+        const [subsRes, monthlyRes, yearlyRes, highestRes, limitRes] = await Promise.all([
+          fetch("http://localhost:5000/api/subscriptions").then((res) => res.json()),
           fetch("http://localhost:5000/api/subscriptions/monthly-spending").then((res) => res.json()),
           fetch("http://localhost:5000/api/subscriptions/yearly-projection").then((res) => res.json()),
           fetch("http://localhost:5000/api/subscriptions/highest-subscription").then((res) => res.json()),
           fetch("http://localhost:5000/api/subscriptions/limit-set").then((res) => res.json()),
         ]);
 
+        setSubscriptions(subsRes);
         setSummary({
           monthlySpending: monthlyRes.totalSpending,
           yearlyProjection: yearlyRes.yearlyProjection,
@@ -30,11 +36,11 @@ const Home = () => {
           limitSet: limitRes.limitSet,
         });
       } catch (error) {
-        console.error("Error fetching summary data:", error.message);
+        console.error("Error fetching data:", error.message);
       }
     };
 
-    fetchSummary();
+    fetchData();
   }, []);
 
   return (
@@ -47,9 +53,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white text-black rounded-lg shadow-md p-4">
             <h2 className="text-xl font-bold mb-4">Calendar</h2>
-            <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-              <p>Calendar Component Placeholder</p>
-            </div>
+            <Calendar subscriptions={subscriptions} />
           </div>
 
           <div className="bg-white text-black rounded-lg shadow-md p-4 flex flex-col justify-between">
@@ -82,16 +86,14 @@ const Home = () => {
           <div className="bg-white text-black rounded-lg shadow-md p-4">
             <h2 className="text-xl font-bold mb-4">Monthly Spending</h2>
             <div className="bg-gray-100 rounded-lg h-64 flex flex-col items-center justify-center">
-              <p>Line Chart Placeholder</p>
-              <img src={SubTrackerChill} alt="Mascot" className="w-30 mt-4" />
+              <MonthlySpending />
             </div>
           </div>
 
           <div className="bg-white text-black rounded-lg shadow-md p-4">
             <h2 className="text-xl font-bold mb-4">Categories</h2>
             <div className="bg-gray-100 rounded-lg h-64 flex flex-col items-center justify-center">
-              <p>Pie Chart Placeholder</p>
-              <img src={SubTrackerPieChart} alt="Mascot" className="w-30 mt-4" />
+              <PieChart subscriptions={subscriptions} />
             </div>
           </div>
         </div>

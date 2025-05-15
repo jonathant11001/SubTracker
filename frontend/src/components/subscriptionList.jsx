@@ -136,7 +136,7 @@ const SubscriptionList = () => {
                     {new Date(sub.startDate).toLocaleDateString()}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {new Date(sub.previousRenewDate).toLocaleDateString()}
+                    {new Date(sub.previousRenewalDate).toLocaleDateString()}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {new Date(sub.renewalDate).toLocaleDateString()}

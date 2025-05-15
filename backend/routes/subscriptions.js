@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Subscription = require("../models/subscription");
+const MonthlySpending = require("../models/monthlySpending");
 
 
 router.post("/", async (req, res) => {
@@ -20,17 +21,17 @@ router.post("/", async (req, res) => {
     }
 
     const currentDate = new Date();
-    let previousRenewDate = new Date(validStartDate);
+    let previousRenewalDate = new Date(validStartDate);
     let renewalDate = new Date(validStartDate);
 
     if (typeOfSubscription === "Monthly") {
       while (renewalDate <= currentDate) {
-        previousRenewDate = new Date(renewalDate);
+        previousRenewalDate = new Date(renewalDate);
         renewalDate.setMonth(renewalDate.getMonth() + 1);
       }
     } else if (typeOfSubscription === "Yearly") {
       while (renewalDate <= currentDate) {
-        previousRenewDate = new Date(renewalDate);
+        previousRenewalDate = new Date(renewalDate);
         renewalDate.setFullYear(renewalDate.getFullYear() + 1);
       }
     } else {
@@ -41,7 +42,7 @@ router.post("/", async (req, res) => {
       name,
       price,
       startDate: validStartDate,
-      previousRenewDate,
+      previousRenewalDate,
       renewalDate,
       category,
       typeOfSubscription,
@@ -73,28 +74,50 @@ router.delete('/:id', async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const { typeOfSubscription, startDate } = req.body;
+    const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
 
-    let validStartDate = startDate ? new Date(startDate) : new Date();
+    if (!name || !price || !startDate || !category || !typeOfSubscription) {
+      return res.status(400).send({ error: "All fields are required." });
+    }
+
+    const validStartDate = new Date(startDate);
     if (isNaN(validStartDate)) {
       return res.status(400).send({ error: "Invalid startDate provided." });
     }
-    if (validStartDate > new Date()) {
-      return res.status(400).send({ error: "startDate cannot be in the future." });
-    }
-    
-    let renewalDate = new Date(startDate || Date.now());
+
+    const currentDate = new Date();
+    let previousRenewalDate = new Date(validStartDate);
+    let renewalDate = new Date(validStartDate);
+
     if (typeOfSubscription === "Monthly") {
-      renewalDate.setMonth(renewalDate.getMonth() + 1);
+      while (renewalDate <= currentDate) {
+        previousRenewalDate = new Date(renewalDate);
+        renewalDate.setMonth(renewalDate.getMonth() + 1);
+      }
     } else if (typeOfSubscription === "Yearly") {
-      renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+      while (renewalDate <= currentDate) {
+        previousRenewalDate = new Date(renewalDate);
+        renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+      }
+    } else {
+      return res.status(400).send({ error: "Invalid typeOfSubscription provided." });
     }
 
     const updated = await Subscription.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, renewalDate },
+      {
+        name,
+        price,
+        startDate: validStartDate,
+        category,
+        typeOfSubscription,
+        notification,
+        previousRenewalDate,
+        renewalDate,
+      },
       { new: true }
     );
+
     res.json(updated);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -103,17 +126,53 @@ router.put("/:id", async (req, res) => {
 
 router.get("/monthly-spending", async (req, res) => {
   try {
-    const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+    const subscriptions = await Subscription.find();
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-    const subscriptions = await Subscription.find({
-      renewalDate: { $gte: startOfMonth, $lte: endOfMonth },
+    let totalSpending = 0;
+
+    subscriptions.forEach((sub) => {
+      const startDate = new Date(sub.startDate);
+      if (isNaN(startDate)) return;
+
+      let previousRenewalDate = new Date(startDate);
+      let renewalDate = new Date(startDate);
+
+      if (sub.typeOfSubscription === "Monthly") {
+        while (renewalDate <= now) {
+          previousRenewalDate = new Date(renewalDate);
+          renewalDate.setMonth(renewalDate.getMonth() + 1);
+        }
+      } else if (sub.typeOfSubscription === "Yearly") {
+        while (renewalDate <= now) {
+          previousRenewalDate = new Date(renewalDate);
+          renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+        }
+      }
+
+      if (
+        (previousRenewalDate >= startOfMonth && previousRenewalDate <= endOfMonth) ||
+        (renewalDate >= startOfMonth && renewalDate <= endOfMonth)
+      ) {
+        totalSpending += sub.price;
+      }
     });
 
-    const totalSpending = subscriptions.reduce((sum, sub) => sum + sub.price, 0);
+    const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const existingRecord = await MonthlySpending.findOne({ month: monthKey });
+
+    if (!existingRecord) {
+      await MonthlySpending.create({ month: monthKey, totalSpending });
+    } else {
+      existingRecord.totalSpending = totalSpending;
+      await existingRecord.save();
+    }
+
     res.json({ totalSpending });
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -202,6 +261,21 @@ router.post("/update-renewals", async (req, res) => {
   } catch (error) {
     console.error("Error updating renewals:", error.message);
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.get("/spending-history", async (req, res) => {
+  try {
+    const now = new Date();
+    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
+
+    const spendingHistory = await MonthlySpending.find({
+      month: { $gte: oneYearAgo.toISOString().slice(0, 7) },
+    }).sort({ month: 1 });
+
+    res.json(spendingHistory);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
