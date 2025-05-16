@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const subscriptionRoutes = require("./routes/subscriptions");
+const usersRouter = require("./routes/users");
 
 const app = express();
 const PORT = 5000;
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/users", usersRouter);
 
 // Connect to MongoDB
 mongoose

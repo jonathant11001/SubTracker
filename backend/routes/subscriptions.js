@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Subscription = require("../models/subscription");
 const MonthlySpending = require("../models/monthlySpending");
+const User = require("../models/user");
+const auth = require("../middleware/auth");
 
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   try {
-    const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
+    const { userId, name, price, startDate, category, typeOfSubscription, notification } = req.body;
 
     if (!name || !price || !startDate || !category || !typeOfSubscription) {
       return res.status(400).send({ error: "All fields are required." });
@@ -47,9 +49,13 @@ router.post("/", async (req, res) => {
       category,
       typeOfSubscription,
       notification,
+      user: userId,
     });
 
     await subscription.save();
+
+    await User.findByIdAndUpdate(userId, { $push: { subscriptions: subscription._id } });
+
     res.status(201).send(subscription);
   } catch (error) {
     console.error("Error creating subscription:", error.message);
@@ -58,21 +64,22 @@ router.post("/", async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
-    const subscriptions = await Subscription.find();
+    const { userId } = req.query;
+    const subscriptions = await Subscription.find({ user: userId });
     res.send(subscriptions);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   await Subscription.findByIdAndDelete(req.params.id);
   res.json({ success: true });
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   try {
     const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
 
@@ -124,7 +131,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.get("/monthly-spending", async (req, res) => {
+router.get("/monthly-spending", auth, async (req, res) => {
   try {
     const subscriptions = await Subscription.find();
     const now = new Date();
@@ -176,7 +183,7 @@ router.get("/monthly-spending", async (req, res) => {
   }
 });
 
-router.get("/yearly-projection", async (req, res) => {
+router.get("/yearly-projection", auth, async (req, res) => {
   try {
     const subscriptions = await Subscription.find();
 
@@ -195,7 +202,7 @@ router.get("/yearly-projection", async (req, res) => {
   }
 });
 
-router.get("/limit-set", async (req, res) => {
+router.get("/limit-set", auth, async (req, res) => {
   try {
     const limitSet = 500;
     res.json({ limitSet });
@@ -204,7 +211,7 @@ router.get("/limit-set", async (req, res) => {
   }
 });
 
-router.get("/highest-subscription", async (req, res) => {
+router.get("/highest-subscription", auth, async (req, res) => {
   try {
     const highestSubscription = await Subscription.findOne().sort({ price: -1 }).limit(1);
 
@@ -218,7 +225,7 @@ router.get("/highest-subscription", async (req, res) => {
   }
 });
 
-router.post("/update-renewals", async (req, res) => {
+router.post("/update-renewals", auth, async (req, res) => {
   try {
     console.log("Updating subscription renewals...");
 
@@ -264,7 +271,7 @@ router.post("/update-renewals", async (req, res) => {
   }
 });
 
-router.get("/spending-history", async (req, res) => {
+router.get("/spending-history", auth, async (req, res) => {
   try {
     const now = new Date();
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
