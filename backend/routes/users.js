@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env.JWT_SECRET || "yourSecretKey"; // Use env var in production
+const JWT_SECRET = process.env.JWT_SECRET || "yourSecretKey";
 
 router.post("/signup", async (req, res) => {
   try {

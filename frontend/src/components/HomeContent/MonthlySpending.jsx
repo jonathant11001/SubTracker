@@ -10,7 +10,10 @@ const MonthlySpending = () => {
   useEffect(() => {
     const fetchSpendingHistory = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/subscriptions/spending-history");
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5000/api/subscriptions/spending-history", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         const data = await response.json();
         setSpendingHistory(data);
       } catch (error) {

@@ -3,8 +3,10 @@ import React from "react";
 const UpdateRenewalsButton = () => {
   const handleUpdateRenewals = async () => {
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/subscriptions/update-renewals", {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await response.json();
       if (data.success) {

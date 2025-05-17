@@ -20,12 +20,16 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
+        console.log("Token:", token);
+
         const [subsRes, monthlyRes, yearlyRes, highestRes, limitRes] = await Promise.all([
-          fetch("http://localhost:5000/api/subscriptions").then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/monthly-spending").then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/yearly-projection").then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/highest-subscription").then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/limit-set").then((res) => res.json()),
+          fetch("http://localhost:5000/api/subscriptions", { headers }).then((res) => res.json()),
+          fetch("http://localhost:5000/api/subscriptions/monthly-spending", { headers }).then((res) => res.json()),
+          fetch("http://localhost:5000/api/subscriptions/yearly-projection", { headers }).then((res) => res.json()),
+          fetch("http://localhost:5000/api/subscriptions/highest-subscription", { headers }).then((res) => res.json()),
+          fetch("http://localhost:5000/api/subscriptions/limit-set", { headers }).then((res) => res.json()),
         ]);
 
         setSubscriptions(subsRes);

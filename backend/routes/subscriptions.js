@@ -8,7 +8,7 @@ const auth = require("../middleware/auth");
 
 router.post("/", auth, async (req, res) => {
   try {
-    const { userId, name, price, startDate, category, typeOfSubscription, notification } = req.body;
+    const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
 
     if (!name || !price || !startDate || !category || !typeOfSubscription) {
       return res.status(400).send({ error: "All fields are required." });
@@ -49,34 +49,35 @@ router.post("/", auth, async (req, res) => {
       category,
       typeOfSubscription,
       notification,
-      user: userId,
+      user: req.user.userId,
     });
 
     await subscription.save();
 
-    await User.findByIdAndUpdate(userId, { $push: { subscriptions: subscription._id } });
-
-    res.status(201).send(subscription);
+    res.status(201).json(subscription);
   } catch (error) {
     console.error("Error creating subscription:", error.message);
     res.status(500).send({ error: error.message });
   }
 });
 
-
 router.get("/", auth, async (req, res) => {
   try {
-    const { userId } = req.query;
-    const subscriptions = await Subscription.find({ user: userId });
-    res.send(subscriptions);
+    const subscriptions = await Subscription.find({ user: req.user.userId });
+    res.json(subscriptions);
   } catch (error) {
-    res.status(500).send({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
 router.delete('/:id', auth, async (req, res) => {
-  await Subscription.findByIdAndDelete(req.params.id);
-  res.json({ success: true });
+  try {
+    const sub = await Subscription.findOneAndDelete({ _id: req.params.id, user: req.user.userId });
+    if (!sub) return res.status(404).json({ error: "Subscription not found" });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 router.put("/:id", auth, async (req, res) => {
@@ -110,8 +111,8 @@ router.put("/:id", auth, async (req, res) => {
       return res.status(400).send({ error: "Invalid typeOfSubscription provided." });
     }
 
-    const updated = await Subscription.findByIdAndUpdate(
-      req.params.id,
+    const updated = await Subscription.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.userId },
       {
         name,
         price,
@@ -125,6 +126,8 @@ router.put("/:id", auth, async (req, res) => {
       { new: true }
     );
 
+    if (!updated) return res.status(404).json({ error: "Subscription not found" });
+
     res.json(updated);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -133,7 +136,7 @@ router.put("/:id", auth, async (req, res) => {
 
 router.get("/monthly-spending", auth, async (req, res) => {
   try {
-    const subscriptions = await Subscription.find();
+    const subscriptions = await Subscription.find({ user: req.user.userId });
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -168,10 +171,10 @@ router.get("/monthly-spending", auth, async (req, res) => {
     });
 
     const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    const existingRecord = await MonthlySpending.findOne({ month: monthKey });
+    const existingRecord = await MonthlySpending.findOne({ month: monthKey, user: req.user.userId });
 
     if (!existingRecord) {
-      await MonthlySpending.create({ month: monthKey, totalSpending });
+      await MonthlySpending.create({ month: monthKey, totalSpending, user: req.user.userId });
     } else {
       existingRecord.totalSpending = totalSpending;
       await existingRecord.save();
@@ -185,7 +188,7 @@ router.get("/monthly-spending", auth, async (req, res) => {
 
 router.get("/yearly-projection", auth, async (req, res) => {
   try {
-    const subscriptions = await Subscription.find();
+    const subscriptions = await Subscription.find({ user: req.user.userId });
 
     const yearlyProjection = subscriptions.reduce((sum, sub) => {
       if (sub.typeOfSubscription === "Monthly") {
@@ -213,7 +216,7 @@ router.get("/limit-set", auth, async (req, res) => {
 
 router.get("/highest-subscription", auth, async (req, res) => {
   try {
-    const highestSubscription = await Subscription.findOne().sort({ price: -1 }).limit(1);
+    const highestSubscription = await Subscription.findOne({ user: req.user.userId }).sort({ price: -1 }).limit(1);
 
     if (!highestSubscription) {
       return res.json({ highestSubscription: { name: "N/A", price: 0 } });
@@ -229,7 +232,7 @@ router.post("/update-renewals", auth, async (req, res) => {
   try {
     console.log("Updating subscription renewals...");
 
-    const subscriptions = await Subscription.find();
+    const subscriptions = await Subscription.find({ user: req.user.userId });
 
     for (const sub of subscriptions) {
       let startDate = sub.startDate ? new Date(sub.startDate) : null;
@@ -260,7 +263,6 @@ router.post("/update-renewals", auth, async (req, res) => {
         previousRenewalDate: latestRenewalDate,
         renewalDate: nextRenewalDate,
       });
-
     }
 
     console.log("Renewals updated successfully.");
@@ -277,6 +279,7 @@ router.get("/spending-history", auth, async (req, res) => {
     const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), 1);
 
     const spendingHistory = await MonthlySpending.find({
+      user: req.user.userId,
       month: { $gte: oneYearAgo.toISOString().slice(0, 7) },
     }).sort({ month: 1 });
 

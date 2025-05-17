@@ -22,6 +22,7 @@ const Login = () => {
         setError(data.error || "Login failed");
         return;
       }
+      localStorage.setItem("token", data.token);
       navigate("/home");
     } catch (err) {
       setError("Login failed");

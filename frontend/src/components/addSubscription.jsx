@@ -28,7 +28,12 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/subscriptions", form);
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5000/api/subscriptions",
+        form,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setForm({
         name: "",
         price: "",

@@ -14,7 +14,10 @@ const SubscriptionList = () => {
   useEffect(() => {
     const fetchSubscriptions = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/subscriptions");
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:5000/api/subscriptions", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         setSubscriptions(response.data);
       } catch (error) {
         console.error("Error fetching subscriptions:", error.message);
@@ -47,9 +50,12 @@ const SubscriptionList = () => {
 
   const handleDeleteSelected = async () => {
     try {
+      const token = localStorage.getItem("token");
       await Promise.all(
         selectedSubscriptions.map((id) =>
-          axios.delete(`http://localhost:5000/api/subscriptions/${id}`)
+          axios.delete(`http://localhost:5000/api/subscriptions/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
         )
       );
       setSubscriptions((prev) =>
