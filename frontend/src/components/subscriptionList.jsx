@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import AddSubscription from "./AddSubscription";
+import AddSubscription from "./subscriptionMaker/AddSubscription";
 import axios from "axios";
 import TopMainNav from "./navbar/TopMainNav";
 import UpdateRenewalsButton from "./button/UpdateRenewalButton";
-
+import useUserTheme from "../hooks/useUserTheme";
 
 const SubscriptionList = () => {
+  const [theme] = useUserTheme();
+
   const [subscriptions, setSubscriptions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedSubscriptions, setSelectedSubscriptions] = useState([]);
@@ -69,7 +71,10 @@ const SubscriptionList = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#0D0D0D] via-[#101820] to-[#30E0C6] min-h-screen text-white">
+    <div
+      style={{ background: theme.backgroundColor, minHeight: "100vh" }}
+      className="text-white"
+    >
       <TopMainNav />
       <main className="p-6">
         <div className="flex justify-between items-center mb-4">
@@ -84,15 +89,32 @@ const SubscriptionList = () => {
             </button>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-md p-4 text-black">
+        <div
+          className="rounded-lg shadow-md p-4"
+          style={{
+            background: theme.componentColor === "FFFFFF" ? "#FFFFFF" : `#${theme.componentColor}`,
+            color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF"
+          }}
+        >
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center space-x-2 mb-4">
               <input
                 type="text"
                 placeholder="Search"
-                className="border border-gray-300 rounded px-4 py-2 w-full text-black"
+                className="border border-gray-300 rounded px-4 py-2 w-full"
+                style={{
+                  color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF",
+                  background: theme.componentColor === "FFFFFF" ? "#FFF" : `#${theme.componentColor}`,
+                  borderColor: "#ccc"
+                }}
               />
-              <button className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">
+              <button
+                className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+                style={{
+                  color: "#000",
+                  background: "#e5e5e5"
+                }}
+              >
                 Filter
               </button>
             </div>
@@ -108,7 +130,13 @@ const SubscriptionList = () => {
           </div>
           <table className="w-full border-collapse border border-gray-300">
             <thead>
-              <tr className="bg-gray-100">
+              <tr
+                className="bg-gray-100"
+                style={{
+                  background: theme.componentColor === "FFFFFF" ? "#F3F4F6" : `#${theme.componentColor}`,
+                  color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF"
+                }}
+              >
                 <th className="border border-gray-300 px-4 py-2">
                   <input
                     type="checkbox"
@@ -123,7 +151,6 @@ const SubscriptionList = () => {
                 <th className="border border-gray-300 px-4 py-2">Renewal Date</th>
                 <th className="border border-gray-300 px-4 py-2">Category</th>
                 <th className="border border-gray-300 px-4 py-2">Type of Subscription</th>
-                <th className="border border-gray-300 px-4 py-2">Notification</th>
               </tr>
             </thead>
             <tbody>
@@ -149,15 +176,6 @@ const SubscriptionList = () => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">{sub.category}</td>
                   <td className="border border-gray-300 px-4 py-2">{sub.typeOfSubscription}</td>
-                  <td className="border border-gray-300 px-4 py-2">
-                    <button
-                      className={`px-4 py-2 rounded ${
-                        sub.notification ? "bg-green-500" : "bg-red-500"
-                      } text-white`}
-                    >
-                      {sub.notification ? "On" : "Off"}
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -167,7 +185,13 @@ const SubscriptionList = () => {
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 text-black">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <div
+            className="p-6 rounded-lg shadow-lg w-full max-w-md"
+            style={{
+              background: theme.componentColor === "FFFFFF" ? "#FFFFFF" : `#${theme.componentColor}`,
+              color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF"
+            }}
+          >
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
               onClick={() => setShowModal(false)}

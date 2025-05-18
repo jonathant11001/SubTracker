@@ -8,7 +8,6 @@ const subscriptionSchema = new mongoose.Schema({
   renewalDate: { type: Date, required: true },
   category: { type: String, required: true },
   typeOfSubscription: { type: String, required: true },
-  notification: { type: Boolean, default: false },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 

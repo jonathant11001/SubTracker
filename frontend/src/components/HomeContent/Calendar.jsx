@@ -71,7 +71,7 @@ const Calendar = ({ subscriptions }) => {
           >
             {date ? (
               <>
-                <span className="block text-center">{date.getDate()}</span>
+                <span className="block text-center text-black">{date.getDate()}</span> 
                 {getSubscriptionsForDate(date).map((sub, idx) => {
                   const isRenewalDate =
                     new Date(sub.renewalDate).toDateString() === date.toDateString();

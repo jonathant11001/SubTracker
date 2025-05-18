@@ -8,7 +8,6 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
     startDate: "",
     category: "",
     typeOfSubscription: "",
-    notification: false,
   });
   const [error, setError] = useState("");
 
@@ -40,7 +39,6 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         startDate: "",
         category: "",
         typeOfSubscription: "",
-        notification: false,
       });
 
       onSubscriptionAdded(response.data);
@@ -51,7 +49,7 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 shadow-md rounded mb-6">
+    <form onSubmit={handleSubmit} className="bg-white p-4 shadow-md rounded mb-6 text-black">
       <h2 className="text-xl font-bold mb-4">Add Subscription</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
@@ -78,12 +76,22 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         onChange={(e) => setForm({ ...form, startDate: e.target.value })}
       />
 
-      <input
+      <select
         className="border p-2 mb-2 w-full"
-        placeholder="Category"
         value={form.category}
         onChange={(e) => setForm({ ...form, category: e.target.value })}
-      />
+      >
+        <option value="">Select Category</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Productivity & Software">Productivity & Software</option>
+        <option value="Shopping & Delivery">Shopping & Delivery</option>
+        <option value="Education & Learning">Education & Learning</option>
+        <option value="News & Publications">News & Publications</option>
+        <option value="Health & Wellness">Health & Wellness</option>
+        <option value="Finance & Tools">Finance & Tools</option>
+        <option value="Web Services & Hosting">Web Services & Hosting</option>
+        <option value="Others">Others</option>
+      </select>
 
       <select
         className="border p-2 mb-2 w-full"
@@ -94,16 +102,6 @@ const AddSubscription = ({ onSubscriptionAdded }) => {
         <option value="Monthly">Monthly</option>
         <option value="Yearly">Yearly</option>
       </select>
-
-      <div className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          className="mr-2"
-          checked={form.notification}
-          onChange={(e) => setForm({ ...form, notification: e.target.checked })}
-        />
-        <label className="text-sm">Enable Notifications</label>
-      </div>
 
       <button className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600 transition">
         Add

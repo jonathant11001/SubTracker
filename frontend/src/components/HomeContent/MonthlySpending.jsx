@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import useUserTheme from "../../hooks/useUserTheme";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const MonthlySpending = () => {
+  const [theme] = useUserTheme();
   const [spendingHistory, setSpendingHistory] = useState([]);
 
   useEffect(() => {
@@ -44,24 +46,41 @@ const MonthlySpending = () => {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          color: theme?.fontColor || "#FFF"
+        }
       },
       title: {
         display: true,
         text: "Monthly Spending (Past Year)",
+        color: theme?.fontColor || "#FFF"
       },
+      tooltip: {
+        bodyColor: theme?.fontColor || "#FFF",
+        titleColor: theme?.fontColor || "#FFF",
+      }
     },
     scales: {
       x: {
         title: {
           display: true,
           text: "Months",
+          color: theme?.fontColor || "#FFF"
         },
+        ticks: {
+          color: theme?.fontColor || "#FFF"
+        }
       },
       y: {
         title: {
           display: true,
           text: "Spending ($)",
+          color: theme?.fontColor || "#FFF"
         },
+        ticks: {
+          color: theme?.fontColor || "#FFF"
+        },
+        min: 0
       },
     },
   };

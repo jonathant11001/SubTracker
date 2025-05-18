@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import useUserTheme from "../../hooks/useUserTheme";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = ({ subscriptions }) => {
+  const [theme] = useUserTheme();
   const [categoryData, setCategoryData] = useState({});
 
   useEffect(() => {
@@ -57,10 +59,18 @@ const PieChart = ({ subscriptions }) => {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          color: theme?.fontColor || "#FFF",
+        },
       },
       title: {
         display: true,
         text: "Spending by Category",
+        color: theme?.fontColor || "#FFF",
+      },
+      tooltip: {
+        bodyColor: theme?.fontColor || "#FFF",
+        titleColor: theme?.fontColor || "#FFF",
       },
     },
   };

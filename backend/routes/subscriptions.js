@@ -8,7 +8,7 @@ const auth = require("../middleware/auth");
 
 router.post("/", auth, async (req, res) => {
   try {
-    const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
+    const { name, price, startDate, category, typeOfSubscription} = req.body;
 
     if (!name || !price || !startDate || !category || !typeOfSubscription) {
       return res.status(400).send({ error: "All fields are required." });
@@ -48,7 +48,6 @@ router.post("/", auth, async (req, res) => {
       renewalDate,
       category,
       typeOfSubscription,
-      notification,
       user: req.user.userId,
     });
 
@@ -82,7 +81,7 @@ router.delete('/:id', auth, async (req, res) => {
 
 router.put("/:id", auth, async (req, res) => {
   try {
-    const { name, price, startDate, category, typeOfSubscription, notification } = req.body;
+    const { name, price, startDate, category, typeOfSubscription} = req.body;
 
     if (!name || !price || !startDate || !category || !typeOfSubscription) {
       return res.status(400).send({ error: "All fields are required." });
@@ -119,7 +118,6 @@ router.put("/:id", auth, async (req, res) => {
         startDate: validStartDate,
         category,
         typeOfSubscription,
-        notification,
         previousRenewalDate,
         renewalDate,
       },
