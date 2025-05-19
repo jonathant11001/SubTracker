@@ -109,7 +109,7 @@ const SubscriptionList = () => {
                 placeholder="Search"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="border border-gray-300 rounded px-4 py-2 w-full"
+                className="border border-gray-300 rounded px-2 py-1 w-50"
                 style={{
                   color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF",
                   background: theme.componentColor === "FFFFFF" ? "#FFF" : `#${theme.componentColor}`,
