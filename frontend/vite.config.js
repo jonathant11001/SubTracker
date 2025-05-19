@@ -13,4 +13,7 @@ export default defineConfig({
     strictPort: true,
     port: 10000,
   },
+  preview: {
+    allowedHosts: ['subtrackerfrontend.onrender.com'],
+  },
 })
