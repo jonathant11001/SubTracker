@@ -14,7 +14,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
-  "http://localhost:10000/",
+  "http://localhost:10000",
   "https://subtrackerfrontend.onrender.com",
 ];
 
