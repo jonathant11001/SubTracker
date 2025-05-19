@@ -5,11 +5,11 @@ import UpdateRenewalsButton from "./button/UpdateRenewalButton";
 import Calendar from "./HomeContent/Calendar";
 import MonthlySpending from "./HomeContent/MonthlySpending";
 import PieChart from "./HomeContent/PieChart";
-import useUserTheme from "../hooks/useUserTheme";
+import { useTheme } from "../context/ThemeContext";
 
 const Home = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
-  const [theme] = useUserTheme();
+  const { theme } = useTheme();
   const [subscriptions, setSubscriptions] = useState([]);
   const [summary, setSummary] = useState({
     monthlySpending: 0,
@@ -17,6 +17,7 @@ const Home = () => {
     highestSubscription: { name: "", price: 0 },
     limit: 0,
   });
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,6 +46,7 @@ const Home = () => {
           highestSubscription: highestRes.highestSubscription,
           limit: userRes.limit !== undefined ? userRes.limit : 0,
         });
+        setUsername(userRes.username || "");
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
@@ -64,7 +66,10 @@ const Home = () => {
     >
       <TopMainNav />
       <div className="p-6">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between mb-4">
+          <h1 className="text-3xl font-bold mb-6">
+            Welcome Back {username}
+          </h1>
           <UpdateRenewalsButton />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,8 +114,15 @@ const Home = () => {
                 <span>${summary.highestSubscription.price.toFixed(2)}</span>
               </li>
               <li className="flex justify-between">
-                <span>Limit Set</span>
-                <span>${summary.limit !== undefined ? summary.limit.toFixed(2) : "N/A"}</span>
+                <span>
+                  Limit Set
+                  {summary.yearlyProjection > summary.limit && (
+                    <span className="ml-2 text-red-600" title="Yearly projection exceeds limit">⚠️</span>
+                  )}
+                </span>
+                <span className={summary.yearlyProjection > summary.limit ? "text-red-600 font-bold" : ""}>
+                  ${summary.limit !== undefined ? summary.limit.toFixed(2) : "N/A"}
+                </span>
               </li>
             </ul>
             <img src={SubTrackerPeeking} alt="Mascot" className="w-30 mt-4 ml-auto" />

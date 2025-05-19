@@ -3,11 +3,11 @@ import AddSubscription from "./subscriptionMaker/AddSubscription";
 import axios from "axios";
 import TopMainNav from "./navbar/TopMainNav";
 import UpdateRenewalsButton from "./button/UpdateRenewalButton";
-import useUserTheme from "../hooks/useUserTheme";
+import { useTheme } from "../context/ThemeContext";
 
 const SubscriptionList = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
-  const [theme] = useUserTheme();
+  const { theme } = useTheme();
 
   const [subscriptions, setSubscriptions] = useState([]);
   const [showModal, setShowModal] = useState(false);

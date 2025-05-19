@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Subscription = require("../models/subscription");
 const MonthlySpending = require("../models/monthlySpending");
-const User = require("../models/user");
 const auth = require("../middleware/auth");
 
 

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import useUserTheme from "../../hooks/useUserTheme";
+import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = ({ subscriptions }) => {
-  const [theme] = useUserTheme();
+  const { theme } = useTheme();
   const [categoryData, setCategoryData] = useState({});
 
   useEffect(() => {

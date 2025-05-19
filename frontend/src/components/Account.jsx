@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TopMainNav from "./navbar/TopMainNav";
-import useUserTheme from "../hooks/useUserTheme";
+import { useTheme } from "../context/ThemeContext";
 
 const COLORS = [
   { name: "Mint Breeze", backgroundColor: "linear-gradient(135deg, #E6FFFA 0%, #30E0C6 100%)", group: "Light", componentColor: "FFFFFF" },
@@ -13,7 +13,7 @@ const COLORS = [
 
 const Account = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
-  const [theme, setTheme] = useUserTheme();
+  const { theme, setTheme, loading } = useTheme();
   const [password, setPassword] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);
   const [message, setMessage] = useState("");
@@ -156,6 +156,8 @@ const Account = () => {
     };
     updateTheme();
   };
+
+  if (loading || !theme) return null;
 
   return (
     <div

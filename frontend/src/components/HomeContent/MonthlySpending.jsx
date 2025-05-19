@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
-import useUserTheme from "../../hooks/useUserTheme";
+import { useTheme } from "../../context/ThemeContext";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const MonthlySpending = () => {
   const VITE_API_URL = import.meta.env.VITE_API_URL;
-  const [theme] = useUserTheme();
+  const { theme } = useTheme();
   const [spendingHistory, setSpendingHistory] = useState([]);
 
   useEffect(() => {
