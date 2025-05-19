@@ -29,10 +29,16 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/users", usersRouter);
 
 // Connect to MongoDB
-mongoose
-  .connect(API_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Connected to MongoDB");
-    app.listen(PORT, '0.0.0.0', () => console.log(`Server is running on http://0.0.0.0:${PORT}`));
-  })
-  .catch((error) => console.error("Error connecting to MongoDB:", error.message));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+};
+connectDB()
+app.listen(PORT,'0.0.0.0', () => {
+  console.log(`Server is running on http://0.0.0.0:${PORT}`);
+});
