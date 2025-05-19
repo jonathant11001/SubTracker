@@ -8,6 +8,7 @@ import PieChart from "./HomeContent/PieChart";
 import useUserTheme from "../hooks/useUserTheme";
 
 const Home = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const [theme] = useUserTheme();
   const [subscriptions, setSubscriptions] = useState([]);
   const [summary, setSummary] = useState({

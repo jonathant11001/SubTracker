@@ -11,8 +11,16 @@ const usersRouter = require("./routes/users");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://your-production-frontend.com"
+];
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes

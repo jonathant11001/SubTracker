@@ -12,6 +12,7 @@ const COLORS = [
 ];
 
 const Account = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const [theme, setTheme] = useUserTheme();
   const [password, setPassword] = useState("");
   const [selectedColor, setSelectedColor] = useState(null);

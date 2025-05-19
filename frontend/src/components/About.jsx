@@ -1,7 +1,7 @@
 import React from "react";
 import TopLandingNav from "./navbar/TopLandingNav";
-import about1 from "../assets/SubTrackerAbout1.png"; // Replace with your mascot image
-import about2 from "../assets/SubTrackerAbout2.png"; // Replace with your mascot image
+import about1 from "../assets/SubTrackerAbout1.png";
+import about2 from "../assets/SubTrackerAbout2.png";
 
 const About = () => {
   return (

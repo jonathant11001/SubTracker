@@ -4,6 +4,7 @@ import mascot from "../assets/SubTrackerWave.png";
 import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();

@@ -6,6 +6,7 @@ import useUserTheme from "../../hooks/useUserTheme";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const MonthlySpending = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const [theme] = useUserTheme();
   const [spendingHistory, setSpendingHistory] = useState([]);
 

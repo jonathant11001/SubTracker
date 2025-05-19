@@ -6,6 +6,7 @@ import UpdateRenewalsButton from "./button/UpdateRenewalButton";
 import useUserTheme from "../hooks/useUserTheme";
 
 const SubscriptionList = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const [theme] = useUserTheme();
 
   const [subscriptions, setSubscriptions] = useState([]);
