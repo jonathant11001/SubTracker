@@ -34,7 +34,7 @@ const Account = () => {
     const fetchLimit = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/users/me", {
+        const res = await fetch(`${VITE_API_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -53,7 +53,7 @@ const Account = () => {
       const updateTheme = async () => {
         try {
           const token = localStorage.getItem("token");
-          await fetch("http://localhost:5000/api/users/theme", {
+          await fetch(`${VITE_API_URL}/api/users/theme`, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -84,7 +84,7 @@ const Account = () => {
     }
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/users/password", {
+      const res = await fetch(`${VITE_API_URL}/api/users/password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +115,7 @@ const Account = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:5000/api/users/limit", {
+      await fetch(`${VITE_API_URL}/api/users/limit`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const Account = () => {
     const updateTheme = async () => {
       try {
         const token = localStorage.getItem("token");
-        await fetch("http://localhost:5000/api/users/theme", {
+        await fetch(`${VITE_API_URL}/api/users/theme`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

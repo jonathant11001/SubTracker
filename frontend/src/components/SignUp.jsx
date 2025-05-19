@@ -12,7 +12,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/api/users/signup", {
+      const res = await fetch(`${VITE_API_URL}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

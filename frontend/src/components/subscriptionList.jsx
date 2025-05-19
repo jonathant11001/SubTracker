@@ -17,7 +17,7 @@ const SubscriptionList = () => {
     const fetchSubscriptions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/api/subscriptions", {
+        const response = await axios.get(`${VITE_API_URL}/api/subscriptions`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSubscriptions(response.data);
@@ -55,7 +55,7 @@ const SubscriptionList = () => {
       const token = localStorage.getItem("token");
       await Promise.all(
         selectedSubscriptions.map((id) =>
-          axios.delete(`http://localhost:5000/api/subscriptions/${id}`, {
+          axios.delete(`${VITE_API_URL}/api/subscriptions/${id}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
         )

@@ -30,11 +30,11 @@ const Home = () => {
           highestRes,
           userRes
         ] = await Promise.all([
-          fetch("http://localhost:5000/api/subscriptions", { headers }).then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/monthly-spending", { headers }).then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/yearly-projection", { headers }).then((res) => res.json()),
-          fetch("http://localhost:5000/api/subscriptions/highest-subscription", { headers }).then((res) => res.json()),
-          fetch("http://localhost:5000/api/users/me", { headers }).then((res) => res.json()),
+          fetch(`${VITE_API_URL}/api/subscriptions`, { headers }).then((res) => res.json()),
+          fetch(`${VITE_API_URL}/api/subscriptions/monthly-spending`, { headers }).then((res) => res.json()),
+          fetch(`${VITE_API_URL}/api/subscriptions/yearly-projection`, { headers }).then((res) => res.json()),
+          fetch(`${VITE_API_URL}/api/subscriptions/highest-subscription`, { headers }).then((res) => res.json()),
+          fetch(`${VITE_API_URL}/api/users/me`, { headers }).then((res) => res.json()),
         ]);
 
         setSubscriptions(subsRes);
