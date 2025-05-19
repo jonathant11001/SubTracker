@@ -31,7 +31,7 @@ app.use("/api/users", usersRouter);
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(API_URL);
     console.log("MongoDB connected");
   } catch (err) {
     console.error(err);
