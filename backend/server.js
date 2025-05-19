@@ -14,7 +14,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
-  "https://your-production-frontend.com",
+  "https://subtrackerfrontend.onrender.com/",
 ];
 
 // Middleware
