@@ -1,10 +1,11 @@
 import React from "react";
 
 const UpdateRenewalsButton = () => {
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   const handleUpdateRenewals = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/subscriptions/update-renewals", {
+      const response = await fetch(`${VITE_API_URL}/api/subscriptions/update-renewals`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` }
       });
