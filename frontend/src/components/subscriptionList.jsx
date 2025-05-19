@@ -13,6 +13,7 @@ const SubscriptionList = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedSubscriptions, setSelectedSubscriptions] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -45,7 +46,7 @@ const SubscriptionList = () => {
 
   const handleRowSelect = (id) => {
     if (selectedSubscriptions.includes(id)) {
-      setSelectedSubscriptions(selectedSubscriptions.filter((subId) => subId !== id)); // Deselect
+      setSelectedSubscriptions(selectedSubscriptions.filter((subId) => subId !== id));
     } else {
       setSelectedSubscriptions([...selectedSubscriptions, id]);
     }
@@ -70,6 +71,10 @@ const SubscriptionList = () => {
       console.error("Error deleting subscriptions:", error.message);
     }
   };
+
+  const filteredSubscriptions = subscriptions.filter(sub =>
+    sub.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div
@@ -98,10 +103,12 @@ const SubscriptionList = () => {
           }}
         >
           <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center space-x-2 mb-4 w-full">
               <input
                 type="text"
                 placeholder="Search"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 className="border border-gray-300 rounded px-4 py-2 w-full"
                 style={{
                   color: theme.componentColor === "FFFFFF" ? "#000" : "#FFF",
@@ -109,15 +116,6 @@ const SubscriptionList = () => {
                   borderColor: "#ccc"
                 }}
               />
-              <button
-                className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-                style={{
-                  color: "#000",
-                  background: "#e5e5e5"
-                }}
-              >
-                Filter
-              </button>
             </div>
             <div className="flex space-x-2">
               <button
@@ -155,7 +153,7 @@ const SubscriptionList = () => {
               </tr>
             </thead>
             <tbody>
-              {subscriptions.map((sub) => (
+              {filteredSubscriptions.map((sub) => (
                 <tr key={sub._id} className="text-center">
                   <td className="border border-gray-300 px-4 py-2">
                     <input
