@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const API_URL = process.env.MONGODB_URL;
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -14,7 +14,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4173",
-  "https://your-production-frontend.com"
+  "https://your-production-frontend.com",
 ];
 
 // Middleware
